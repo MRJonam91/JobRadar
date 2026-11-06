@@ -37,9 +37,15 @@ JobRadar provides a deterministic, local-first **Single Source of Truth** (`jobr
   - Monitors **offer expiration deadlines** so decision windows are never missed.
 - **Zero Speculative Numbers**: Enforces that any recorded compensation includes an auditable, verifiable source (`job_posting`, `recruiter_email`, `offer_letter`).
 - **Multi-Sink Exporting**:
-  - Generates comprehensive Markdown pipeline reviews.
-  - Exports standard RFC 5545 iCalendar (`.ics`) schedules for Google Calendar, Apple Calendar, and Microsoft Outlook.
-  - Generates CSV files for spreadsheet reporting.
+  - Interactive standalone HTML dashboard with Kanban columns and dark/light mode.
+  - Comprehensive Markdown pipeline reviews.
+  - Standard RFC 5545 iCalendar (`.ics`) schedules for Google Calendar, Apple Calendar, and Microsoft Outlook.
+  - CSV files for spreadsheet reporting with bi-directional import.
+- **Posting Parser & Job Git Diff**:
+  - Ingest raw posting text or HTML OpenGraph metadata automatically.
+  - Track changes in requirements and compensation between job description revisions.
+- **Reverse Job Match & Target Audit**:
+  - Evaluate compensation, workplace mode, and role fit against your personal criteria.
 - **Zero External Runtime Dependencies**: Standard library only (`node:fs`, `node:path`, `node:crypto`).
 
 ---

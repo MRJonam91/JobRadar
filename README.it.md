@@ -37,9 +37,15 @@ JobRadar trasforma la gestione della ricerca di lavoro in un registro unico dete
   - Monitora le **scadenze di accettazione offerte** (`offerDeadline`) con countdown dei giorni rimanenti.
 - **Obbligo di Fonte Salariale Verificabile**: In conformità alle specifiche di progetto, qualsiasi cifra economica richiede l'indicazione esplicita della fonte (`job_posting`, `recruiter_email`, `offer_letter`), impedendo stime fantasiose.
 - **Esportazione Multi-Formato**:
+  - Dashboard HTML interattiva standalone con vista Kanban e supporto tema scuro/chiaro.
   - Riepiloghi completi della pipeline in formato Markdown.
   - Sincronizzazione automatica tramite file standard RFC 5545 iCalendar (`.ics`) con Google Calendar, Apple Calendar e Outlook.
-  - Esportazione tabellare CSV per fogli di calcolo.
+  - Esportazione tabellare CSV per fogli di calcolo con import bidirezionale.
+- **Posting Parser & Job Git Diff**:
+  - Analisi ed estrazione automatica da testo o HTML OpenGraph.
+  - Rilevamento delle modifiche apportate dai recruiter a requisiti e retribuzioni.
+- **Reverse Job Match & Target Audit**:
+  - Valutazione automatica della compatibilità rispetto ai propri obiettivi di retribuzione e modalità di lavoro.
 - **Zero Dipendenze di Runtime Esterne**: Solo librerie standard di Node.js (`node:fs`, `node:path`, `node:crypto`).
 
 ---
