@@ -7,6 +7,8 @@ export * from './core/validator.ts';
 export * from './core/ledger.ts';
 export * from './core/reminders.ts';
 export * from './core/stats.ts';
+export * from './core/board.ts';
+export * from './core/matcher.ts';
 export * from './exporters/markdown.ts';
 export * from './exporters/ical.ts';
 export * from './exporters/csv.ts';

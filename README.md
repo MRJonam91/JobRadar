@@ -91,10 +91,16 @@ node dist/cli/index.js export --format ical --out interviews.ics
 | `init` | Initialize an empty `jobradar.json` file | `jobradar init` |
 | `add` | Register a new job application | `jobradar add --company "Stripe" --role "SRE" --status applied` |
 | `list` | Show tabular summary of tracked applications | `jobradar list --status applied` |
+| `board` | Render visual ASCII/Unicode Kanban board | `jobradar board` |
+| `show <id>` | Display comprehensive card for an application | `jobradar show stripe-2026` |
 | `status` | Advance application lifecycle status | `jobradar status stripe-2026 interviewing --notes "Passed call"` |
-| `remind` | List active follow-ups, stale postings & deadlines | `jobradar remind` |
+| `stage` | Manage interview rounds (`add`, `result`) | `jobradar stage add stripe-2026 --name "System Design" --date "2026-11-20"` |
+| `remind` | Show alerts, or add/complete follow-ups (`add`, `done`) | `jobradar remind done stripe-2026 rem-1` |
+| `gap` | Calculate skill match and gap with CareerVault | `jobradar gap stripe-2026 --career ../CareerVault/career.json` |
 | `stats` | Calculate conversion funnel metrics & rates | `jobradar stats` |
+| `import` | Bulk import applications from CSV file | `jobradar import --csv applications.csv` |
 | `export` | Export ledger (`markdown`, `ical`, `csv`, `json`) | `jobradar export --format ical --out calendar.ics` |
+| `remove` | Delete an application from the ledger | `jobradar remove stripe-2026` |
 | `doctor` | Audit ledger integrity & schema compliance | `jobradar doctor` |
 
 ---

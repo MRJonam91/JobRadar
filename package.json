@@ -1,6 +1,6 @@
 {
   "name": "jobradar",
-  "version": "1.0.0",
+  "version": "1.1.0-alpha",
   "description": "Deterministic job application tracker, interview stage monitor and follow-up reminder engine: local-first, privacy-respecting, zero-dependency.",
   "type": "module",
   "license": "Apache-2.0",

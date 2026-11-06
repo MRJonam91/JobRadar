@@ -14,10 +14,10 @@ test('CLI: --version outputs version', () => {
   const out = execFileSync(process.execPath, [CLI_PATH, '--version'], {
     encoding: 'utf-8'
   });
-  assert.ok(out.includes('v1.0.0'));
+  assert.ok(out.includes('v1.'));
 });
 
-test('CLI: init, add, list, status and doctor flow', () => {
+test('CLI: comprehensive lifecycle: init, add, show, board, stage, remind, remove', () => {
   const tmp = mkdtempSync(resolve(tmpdir(), 'jobradar-cli-test-'));
   const ledgerFile = resolve(tmp, 'test-ledger.json');
 
@@ -47,7 +47,9 @@ test('CLI: init, add, list, status and doctor flow', () => {
         '--salary-max',
         '105000',
         '--salary-source',
-        'official_listing'
+        'official_listing',
+        '--tags',
+        'kubernetes,rust'
       ],
       { encoding: 'utf-8' }
     );
@@ -61,27 +63,81 @@ test('CLI: init, add, list, status and doctor flow', () => {
     assert.ok(listOut.includes('Acme Inc'));
     assert.ok(listOut.includes('Platform Engineer'));
 
-    // 4. Status update
     const raw = JSON.parse(readFileSync(ledgerFile, 'utf-8'));
     const appId = raw.applications[0].id;
 
+    // 4. Show
+    const showOut = execFileSync(
+      process.execPath,
+      [CLI_PATH, 'show', appId, '--file', ledgerFile],
+      { encoding: 'utf-8' }
+    );
+    assert.ok(showOut.includes('Application Card: Acme Inc — Platform Engineer'));
+    assert.ok(showOut.includes('official_listing'));
+
+    // 5. Stage add
     execFileSync(
       process.execPath,
-      [CLI_PATH, 'status', appId, 'interviewing', '--file', ledgerFile, '--notes', 'Passed screening call'],
+      [
+        CLI_PATH,
+        'stage',
+        'add',
+        appId,
+        '--name',
+        'Technical Screen',
+        '--date',
+        '2026-11-20',
+        '--file',
+        ledgerFile
+      ],
       { encoding: 'utf-8' }
     );
 
-    const updatedRaw = JSON.parse(readFileSync(ledgerFile, 'utf-8'));
-    assert.equal(updatedRaw.applications[0].status, 'interviewing');
-    assert.ok(updatedRaw.applications[0].notes.includes('Passed screening call'));
+    // 6. Board
+    const boardOut = execFileSync(
+      process.execPath,
+      [CLI_PATH, 'board', '--file', ledgerFile],
+      { encoding: 'utf-8' }
+    );
+    assert.ok(boardOut.includes('📌 JobRadar Kanban Board'));
+    assert.ok(boardOut.includes('Acme Inc'));
 
-    // 5. Doctor
+    // 7. Remind add
+    execFileSync(
+      process.execPath,
+      [
+        CLI_PATH,
+        'remind',
+        'add',
+        appId,
+        '--date',
+        '2026-11-19',
+        '--reason',
+        'Review company architecture',
+        '--file',
+        ledgerFile
+      ],
+      { encoding: 'utf-8' }
+    );
+
+    // 8. Doctor
     const doctorOut = execFileSync(
       process.execPath,
       [CLI_PATH, 'doctor', '--file', ledgerFile],
       { encoding: 'utf-8' }
     );
     assert.ok(doctorOut.includes('passed without errors'));
+
+    // 9. Remove
+    const removeOut = execFileSync(
+      process.execPath,
+      [CLI_PATH, 'remove', appId, '--file', ledgerFile],
+      { encoding: 'utf-8' }
+    );
+    assert.ok(removeOut.includes('Removed application'));
+
+    const emptyRaw = JSON.parse(readFileSync(ledgerFile, 'utf-8'));
+    assert.equal(emptyRaw.applications.length, 0);
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }

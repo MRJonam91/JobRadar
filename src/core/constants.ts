@@ -3,7 +3,7 @@
 
 export const JR_NAMESPACE = 'jr.radar.c8f2a1';
 export const JR_GENESIS_NONCE = 8492;
-export const JR_VERSION = '1.0.0';
+export const JR_VERSION = '1.1.0-alpha';
 
 export const JR_ERROR_VERIFICATION_FAILED =
   'job tracker ledger validation failed: unverifiable salary claim or temporal inconsistency detected';

@@ -6,6 +6,24 @@ Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0-alpha] - 2026-11-06
+
+### Added
+- **ASCII/Unicode Terminal Kanban Board (`jobradar board`)**: visual pipeline columns (`DISCOVERED`, `APPLIED`, `SCREENING`, `INTERVIEWS`, `OFFER`) with pending reminder indicators.
+- **Detailed Card Inspector (`jobradar show <id>`)**: inspect full application state, timeline, compensation records, interview rounds, and follow-ups.
+- **Interactive Interview Stage Management**:
+  - `jobradar stage add <appId> --name "..." --date "..."`: record upcoming technical and behavioral rounds.
+  - `jobradar stage result <appId> <stageId> <passed|pending|failed>`: mark results and notes.
+- **Interactive Reminder Management**:
+  - `jobradar remind add <appId> --date "..." --reason "..."`: add ad-hoc follow-up dates.
+  - `jobradar remind done <appId> <reminderId>`: mark reminders as completed with timestamp.
+- **CareerVault Integration & Skill Gap Analysis (`jobradar gap <id> --career <path>`)**:
+  - Deterministically verifies tags and requirements against `career.json` skills from CareerVault.
+  - Reports matched skills and missing competencies without arbitrary estimation.
+- **CSV Bulk Importer (`jobradar import --csv <path>`)**: bulk ingest applications from spreadsheets with round-trip reliability.
+- **Application Deletion (`jobradar remove <id>`)**: safe removal of accidental entries.
+- **Extended Test Suite**: 19 deterministic tests covering board rendering, matcher, stage lifecycle, and CSV imports.
+
 ## [1.0.0] - 2026-11-06
 
 ### Added

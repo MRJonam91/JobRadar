@@ -91,10 +91,16 @@ node dist/cli/index.js export --format ical --out calendari.ics
 | `init` | Inizializza un nuovo file `jobradar.json` | `jobradar init` |
 | `add` | Registra una nuova posizione o candidatura | `jobradar add --company "Stripe" --role "SRE" --status applied` |
 | `list` | Mostra l'elenco tabellare delle candidature | `jobradar list --status applied` |
+| `board` | Mostra la visuale Kanban board da terminale | `jobradar board` |
+| `show <id>` | Mostra la scheda dettagliata di una candidatura | `jobradar show stripe-2026` |
 | `status` | Aggiorna lo stato nella pipeline di selezione | `jobradar status stripe-2026 interviewing --notes "Superato primo screen"` |
-| `remind` | Mostra promemoria attivi, posizioni ferme e scadenze | `jobradar remind` |
+| `stage` | Gestisce i round di colloquio (`add`, `result`) | `jobradar stage add stripe-2026 --name "System Design" --date "2026-11-20"` |
+| `remind` | Mostra avvisi, aggiunge o completa promemoria (`add`, `done`) | `jobradar remind done stripe-2026 rem-1` |
+| `gap` | Analizza lo skill gap rispetto al profilo CareerVault | `jobradar gap stripe-2026 --career ../CareerVault/career.json` |
 | `stats` | Calcola tassi di risposta, colloqui e offerte | `jobradar stats` |
+| `import` | Importa candidature in blocco da file CSV | `jobradar import --csv candidature.csv` |
 | `export` | Esporta il registro (`markdown`, `ical`, `csv`, `json`) | `jobradar export --format ical --out calendario.ics` |
+| `remove` | Elimina una candidatura dal registro | `jobradar remove stripe-2026` |
 | `doctor` | Verifica l'integrità del ledger e conformità schema | `jobradar doctor` |
 
 ---
