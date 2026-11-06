@@ -6,6 +6,25 @@ Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0-beta] - 2026-11-06
+
+### Added
+- **Job Posting Parser & Safe Extractor (`jobradar parse`)**:
+  - Automatically extracts role, company, workplace mode (`remote`, `hybrid`, `onsite`), verifiable salary ranges (`€`, `$`, `k`), and technical keywords from plain text and HTML OpenGraph metadata.
+  - New flag `jobradar add --from-file <path>` to auto-ingest postings and persist a `rawPosting` snapshot for future auditing.
+- **Reverse Job Match & Target Criteria Audit (`jobradar audit <id>`)**:
+  - Audits applications against personal preferences (`minSalary`, `preferredWorkplace`, `targetRoles`, `blacklistedCompanies`).
+  - Reports clear pass/warning/fail rules without guesswork.
+- **Job Git Diff (`jobradar diff <id> --file <updatedPosting>`)**:
+  - Deterministic line-by-line diff between saved job posting snapshots and updated listings.
+  - Automatically flags critical compensation changes and newly added mandatory requirements.
+- **Interactive Standalone HTML Exporter (`jobradar export --format html`)**:
+  - Zero-dependency, offline-capable single-file dashboard with dark/light theme support.
+  - Includes KPI metric cards, responsive Kanban board, and full applications data table.
+- **Advanced CLI Filtering & Sorting**:
+  - Support for `--remote` filtering and `--sort salary|company` in `jobradar list`.
+- **Extended Test Suite**: 25 deterministic unit tests passing in ~1.2s.
+
 ## [1.1.0-alpha] - 2026-11-06
 
 ### Added

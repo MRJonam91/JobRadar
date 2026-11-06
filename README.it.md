@@ -89,8 +89,11 @@ node dist/cli/index.js export --format ical --out calendari.ics
 | Comando | Descrizione | Esempio |
 |---|---|---|
 | `init` | Inizializza un nuovo file `jobradar.json` | `jobradar init` |
-| `add` | Registra una nuova posizione o candidatura | `jobradar add --company "Stripe" --role "SRE" --status applied` |
-| `list` | Mostra l'elenco tabellare delle candidature | `jobradar list --status applied` |
+| `add` | Registra una candidatura (manuale o `--from-file`) | `jobradar add --from-file annuncio.html --url "https://..."` |
+| `parse` | Estrae metadati, retribuzione e skill da testo/HTML | `jobradar parse --file annuncio.txt` |
+| `audit` | Verifica compatibilità con criteri target (Reverse Match) | `jobradar audit stripe-2026` |
+| `diff` | Confronto riga per riga tra snapshot di annunci | `jobradar diff stripe-2026 --file annuncio-aggiornato.txt` |
+| `list` | Mostra l'elenco tabellare (`--remote`, `--sort salary`) | `jobradar list --status applied --remote` |
 | `board` | Mostra la visuale Kanban board da terminale | `jobradar board` |
 | `show <id>` | Mostra la scheda dettagliata di una candidatura | `jobradar show stripe-2026` |
 | `status` | Aggiorna lo stato nella pipeline di selezione | `jobradar status stripe-2026 interviewing --notes "Superato primo screen"` |
@@ -99,7 +102,7 @@ node dist/cli/index.js export --format ical --out calendari.ics
 | `gap` | Analizza lo skill gap rispetto al profilo CareerVault | `jobradar gap stripe-2026 --career ../CareerVault/career.json` |
 | `stats` | Calcola tassi di risposta, colloqui e offerte | `jobradar stats` |
 | `import` | Importa candidature in blocco da file CSV | `jobradar import --csv candidature.csv` |
-| `export` | Esporta il registro (`markdown`, `ical`, `csv`, `json`) | `jobradar export --format ical --out calendario.ics` |
+| `export` | Esporta il registro (`html`, `markdown`, `ical`, `csv`, `json`) | `jobradar export --format html --out report.html` |
 | `remove` | Elimina una candidatura dal registro | `jobradar remove stripe-2026` |
 | `doctor` | Verifica l'integrità del ledger e conformità schema | `jobradar doctor` |
 

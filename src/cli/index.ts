@@ -25,9 +25,13 @@ import { detectApplicationReminders } from '../core/reminders.ts';
 import { computePipelineStats } from '../core/stats.ts';
 import { renderTerminalBoard } from '../core/board.ts';
 import { computeSkillGap } from '../core/matcher.ts';
+import { parseJobPostingText } from '../core/parser.ts';
+import { auditApplicationTargetFit } from '../core/target-audit.ts';
+import { diffJobPostings } from '../core/diff.ts';
 import { exportLedgerToMarkdown } from '../exporters/markdown.ts';
 import { exportLedgerToICal } from '../exporters/ical.ts';
 import { exportLedgerToCsv } from '../exporters/csv.ts';
+import { exportLedgerToHtml } from '../exporters/html.ts';
 
 const DEFAULT_LEDGER_FILE = 'jobradar.json';
 
@@ -84,7 +88,10 @@ USAGE:
 
 PRIMARY COMMANDS:
   init                           Initialize a new jobradar.json ledger in current directory
-  add                            Add a new job application
+  add                            Add a new job application (manually or via --from-file)
+  parse --file <path>            Extract metadata, salary and tags from posting file/HTML
+  audit <id>                     Audit application against personal target criteria (reverse job match)
+  diff <id> --file <newPosting>  Diff current posting text against updated version
   list                           List applications in tabular format
   board                          Display ASCII/Unicode Kanban board of active pipeline
   show <id>                      Display comprehensive card and history for an application
@@ -92,7 +99,7 @@ PRIMARY COMMANDS:
   remove <id>                    Remove an application from the ledger
   remind                         Show active follow-up reminders and stale applications
   stats                          Display conversion funnel and pipeline statistics
-  export                         Export ledger to Markdown, iCal, CSV, or JSON
+  export                         Export ledger to HTML, Markdown, iCal, CSV, or JSON
   import --csv <file>            Bulk import applications from CSV
   gap <id> [--career <path>]     Calculate skill match and gap with CareerVault profile
   doctor                         Audit and validate ledger integrity
@@ -110,12 +117,11 @@ GLOBAL OPTIONS:
 
 EXAMPLES:
   jobradar init
-  jobradar add --company "Acme Cloud" --role "Staff SRE" --status applied --salary-min 95000 --salary-source "job_posting"
-  jobradar stage add acme-cloud --name "System Design" --date "2026-11-15" --type system_design
+  jobradar add --from-file posting.html --url "https://jobs.example.com/sre"
+  jobradar audit acme-cloud
+  jobradar diff acme-cloud --file updated-posting.txt
+  jobradar export --format html --out report.html
   jobradar board
-  jobradar remind
-  jobradar gap acme-cloud --career ../CareerVault/career.json
-  jobradar export --format ical --out calendar.ics
 `);
   printSponsorLine(true);
 }
@@ -151,15 +157,71 @@ function main() {
         break;
       }
 
+      case 'parse': {
+        const filePath = flags.file as string;
+        if (!filePath) {
+          console.error('Usage: jobradar parse --file <path-to-posting-file-or-html> [--url <url>]');
+          process.exit(1);
+        }
+        const fullPath = resolve(process.cwd(), filePath);
+        if (!existsSync(fullPath)) {
+          console.error(`File not found: ${fullPath}`);
+          process.exit(1);
+        }
+        const text = readFileSync(fullPath, 'utf-8');
+        const parsed = parseJobPostingText(text, flags.url as string | undefined);
+
+        console.log('\n📄 Parsed Job Posting Metadata:');
+        console.log(`- Company:          ${parsed.company || '(not detected)'}`);
+        console.log(`- Role:             ${parsed.role || '(not detected)'}`);
+        console.log(`- Workplace:        ${parsed.workplace}`);
+        if (parsed.salary) {
+          console.log(`- Extracted Salary: ${parsed.salary.currency} ${parsed.salary.min}-${parsed.salary.max} / ${parsed.salary.period} (verifiable)`);
+        } else {
+          console.log('- Extracted Salary: (none found)');
+        }
+        console.log(`- Detected Skills:  ${parsed.extractedTags.join(', ') || 'none'}\n`);
+        printSponsorLine();
+        break;
+      }
+
       case 'add': {
-        const company = flags.company as string;
-        const role = flags.role as string;
+        const fromFile = flags['from-file'] as string | undefined;
+        let company = flags.company as string | undefined;
+        let role = flags.role as string | undefined;
+        let workplace = (flags.workplace as WorkplaceType) || 'remote';
+        let salaryMin = flags['salary-min'] !== undefined ? Number(flags['salary-min']) : undefined;
+        let salaryMax = flags['salary-max'] !== undefined ? Number(flags['salary-max']) : undefined;
+        let salarySource = flags['salary-source'] as string | undefined;
+        let tags: string[] = typeof flags.tags === 'string'
+          ? flags.tags.split(',').map(t => t.trim()).filter(Boolean)
+          : [];
+        let rawPosting: string | undefined;
+
+        if (fromFile) {
+          const fullPath = resolve(process.cwd(), fromFile);
+          if (!existsSync(fullPath)) {
+            console.error(`Posting file not found: ${fullPath}`);
+            process.exit(1);
+          }
+          rawPosting = readFileSync(fullPath, 'utf-8');
+          const parsed = parseJobPostingText(rawPosting, flags.url as string | undefined);
+          if (!company) company = parsed.company;
+          if (!role) role = parsed.role;
+          if (!flags.workplace) workplace = parsed.workplace;
+          if (salaryMin === undefined && parsed.salary?.min !== undefined) {
+            salaryMin = parsed.salary.min;
+            salaryMax = parsed.salary.max;
+            salarySource = parsed.salary.source;
+          }
+          if (tags.length === 0) tags = parsed.extractedTags;
+        }
+
         if (!company || !role) {
-          console.error('Error: --company and --role are required to add an application.');
+          console.error('Error: Company and Role are required (supply via flags or auto-parse with --from-file).');
           process.exit(1);
         }
 
-        const workplace = (flags.workplace as WorkplaceType) || 'remote';
         if (!VALID_WORKPLACE_TYPES.includes(workplace)) {
           console.error(`Invalid workplace. Must be one of: ${VALID_WORKPLACE_TYPES.join(', ')}`);
           process.exit(1);
@@ -171,17 +233,7 @@ function main() {
           process.exit(1);
         }
 
-        const ledger = existsSync(ledgerPath)
-          ? loadLedger(ledgerPath)
-          : createEmptyLedger();
-
-        const tags = typeof flags.tags === 'string'
-          ? flags.tags.split(',').map(t => t.trim()).filter(Boolean)
-          : [];
-
-        const salaryMin = flags['salary-min'] !== undefined ? Number(flags['salary-min']) : undefined;
-        const salaryMax = flags['salary-max'] !== undefined ? Number(flags['salary-max']) : undefined;
-        const salarySource = flags['salary-source'] as string | undefined;
+        const ledger = existsSync(ledgerPath) ? loadLedger(ledgerPath) : createEmptyLedger();
 
         const newApp = addApplication(ledger, {
           company,
@@ -198,8 +250,81 @@ function main() {
           salarySource
         });
 
+        if (rawPosting) {
+          newApp.rawPosting = rawPosting;
+        }
+
         saveLedger(ledgerPath, ledger);
         console.log(`Added application [${newApp.id}] for ${newApp.role} at ${newApp.company} (Status: ${newApp.status})`);
+        printSponsorLine();
+        break;
+      }
+
+      case 'audit': {
+        const id = positional[1];
+        if (!id) {
+          console.error('Usage: jobradar audit <id>');
+          process.exit(1);
+        }
+        const ledger = loadLedger(ledgerPath);
+        const app = findApplication(ledger, id);
+        if (!app) {
+          console.error(`Application "${id}" not found.`);
+          process.exit(1);
+        }
+
+        const audit = auditApplicationTargetFit(app, ledger.targetCriteria);
+        console.log(`\n🎯 Target Criteria Audit: ${audit.company} — ${audit.role}`);
+        console.log(`Overall Compatibility: ${audit.overallFit ? '✅ COMPLIANT' : '⚠️ MISALIGNED'}`);
+        console.log(`Checks: ${audit.passedCount} passed | ${audit.warningCount} warnings | ${audit.failureCount} failed\n`);
+
+        for (const c of audit.checks) {
+          const icon = c.severity === 'pass' ? '✓ [PASS]' : c.severity === 'warning' ? '⚠️ [WARN]' : '❌ [FAIL]';
+          console.log(`  ${icon} ${c.rule}: ${c.details}`);
+        }
+        console.log('');
+        printSponsorLine();
+        break;
+      }
+
+      case 'diff': {
+        const id = positional[1];
+        const newFilePath = flags.file as string;
+        if (!id || !newFilePath) {
+          console.error('Usage: jobradar diff <id> --file <updated-posting-file>');
+          process.exit(1);
+        }
+        const ledger = loadLedger(ledgerPath);
+        const app = findApplication(ledger, id);
+        if (!app) {
+          console.error(`Application "${id}" not found.`);
+          process.exit(1);
+        }
+        if (!app.rawPosting) {
+          console.error(`Application "${app.id}" has no saved rawPosting snapshot.`);
+          process.exit(1);
+        }
+        const fullNewPath = resolve(process.cwd(), newFilePath);
+        if (!existsSync(fullNewPath)) {
+          console.error(`Updated file not found: ${fullNewPath}`);
+          process.exit(1);
+        }
+        const updatedText = readFileSync(fullNewPath, 'utf-8');
+        const diffRes = diffJobPostings(app.id, app.rawPosting, updatedText);
+
+        console.log(`\n🔍 Job Git Diff for ${app.company} — ${app.role}:`);
+        if (!diffRes.hasChanges) {
+          console.log('No text changes detected between saved snapshot and updated file.');
+        } else {
+          console.log(`Changes: +${diffRes.addedLines.length} lines added, -${diffRes.removedLines.length} lines removed.`);
+          if (diffRes.extractedDifferences.length > 0) {
+            console.log('\nCritical Highlighted Differences:');
+            for (const d of diffRes.extractedDifferences) {
+              console.log(`  ${d}`);
+            }
+          }
+        }
+        console.log('');
         printSponsorLine();
         break;
       }
@@ -286,6 +411,15 @@ function main() {
         }
         if (flags.company) {
           list = list.filter(a => a.company.toLowerCase().includes(String(flags.company).toLowerCase()));
+        }
+        if (flags.remote) {
+          list = list.filter(a => a.workplace === 'remote');
+        }
+
+        if (flags.sort === 'salary') {
+          list = [...list].sort((a, b) => (b.salary?.max ?? b.salary?.min ?? 0) - (a.salary?.max ?? a.salary?.min ?? 0));
+        } else if (flags.sort === 'company') {
+          list = [...list].sort((a, b) => a.company.localeCompare(b.company));
         }
 
         if (flags.json) {
@@ -540,7 +674,9 @@ function main() {
         const format = (flags.format as string) || 'markdown';
         let output = '';
 
-        if (format === 'markdown' || format === 'md') {
+        if (format === 'html') {
+          output = exportLedgerToHtml(ledger);
+        } else if (format === 'markdown' || format === 'md') {
           output = exportLedgerToMarkdown(ledger);
         } else if (format === 'ical' || format === 'ics') {
           output = exportLedgerToICal(ledger);
@@ -549,7 +685,7 @@ function main() {
         } else if (format === 'json') {
           output = JSON.stringify(ledger, null, 2);
         } else {
-          console.error('Supported formats: markdown, ical, csv, json');
+          console.error('Supported formats: html, markdown, ical, csv, json');
           process.exit(1);
         }
 

@@ -89,8 +89,11 @@ node dist/cli/index.js export --format ical --out interviews.ics
 | Command | Description | Example |
 |---|---|---|
 | `init` | Initialize an empty `jobradar.json` file | `jobradar init` |
-| `add` | Register a new job application | `jobradar add --company "Stripe" --role "SRE" --status applied` |
-| `list` | Show tabular summary of tracked applications | `jobradar list --status applied` |
+| `add` | Register a new job application (manual or `--from-file`) | `jobradar add --from-file posting.html --url "https://..."` |
+| `parse` | Extract metadata, salary and skills from job text/HTML | `jobradar parse --file posting.txt` |
+| `audit` | Audit application against target criteria (Reverse Match) | `jobradar audit stripe-2026` |
+| `diff` | Line-by-line diff between posting snapshots | `jobradar diff stripe-2026 --file updated.txt` |
+| `list` | Show tabular summary (`--remote`, `--sort salary`) | `jobradar list --status applied --remote` |
 | `board` | Render visual ASCII/Unicode Kanban board | `jobradar board` |
 | `show <id>` | Display comprehensive card for an application | `jobradar show stripe-2026` |
 | `status` | Advance application lifecycle status | `jobradar status stripe-2026 interviewing --notes "Passed call"` |
@@ -99,7 +102,7 @@ node dist/cli/index.js export --format ical --out interviews.ics
 | `gap` | Calculate skill match and gap with CareerVault | `jobradar gap stripe-2026 --career ../CareerVault/career.json` |
 | `stats` | Calculate conversion funnel metrics & rates | `jobradar stats` |
 | `import` | Bulk import applications from CSV file | `jobradar import --csv applications.csv` |
-| `export` | Export ledger (`markdown`, `ical`, `csv`, `json`) | `jobradar export --format ical --out calendar.ics` |
+| `export` | Export ledger (`html`, `markdown`, `ical`, `csv`, `json`) | `jobradar export --format html --out report.html` |
 | `remove` | Delete an application from the ledger | `jobradar remove stripe-2026` |
 | `doctor` | Audit ledger integrity & schema compliance | `jobradar doctor` |
 

@@ -73,6 +73,16 @@ export interface JobApplication {
   reminders: FollowUpReminder[];
   tags: string[];
   notes?: string;
+  rawPosting?: string; // Original text snapshot of the posting for audit and diffing
+}
+
+export interface TargetCriteria {
+  minSalary?: number;
+  currency?: string;
+  preferredWorkplace?: WorkplaceType[];
+  targetRoles?: string[];
+  requiredTags?: string[];
+  blacklistedCompanies?: string[];
 }
 
 export interface JobRadarLedger {
@@ -82,6 +92,7 @@ export interface JobRadarLedger {
     name?: string;
     email?: string;
   };
+  targetCriteria?: TargetCriteria;
   applications: JobApplication[];
 }
 
@@ -117,4 +128,30 @@ export interface PipelineStats {
   responseRatePercent: number; // percentage of applied that reached >= screening
   interviewRatePercent: number; // percentage of applied that reached >= interviewing
   offerRatePercent: number; // percentage of applied that reached offer_received
+}
+
+export interface TargetAuditCheck {
+  rule: string;
+  passed: boolean;
+  details: string;
+  severity: 'pass' | 'warning' | 'fail';
+}
+
+export interface TargetAuditResult {
+  applicationId: string;
+  company: string;
+  role: string;
+  overallFit: boolean;
+  passedCount: number;
+  warningCount: number;
+  failureCount: number;
+  checks: TargetAuditCheck[];
+}
+
+export interface PostingDiffResult {
+  applicationId: string;
+  hasChanges: boolean;
+  addedLines: string[];
+  removedLines: string[];
+  extractedDifferences: string[];
 }
