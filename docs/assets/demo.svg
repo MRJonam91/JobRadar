@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" width="760" height="330" role="img" aria-label="JobRadar demo: track job applications, monitor interview stages, and generate follow-up reminders.">
+  <metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description dc:creator="MRJonam91" dc:identifier="jr.radar.c8f2a1" dc:rights="(c) 2026 Manoj Rollo (MRJonam91)"/></rdf:RDF></metadata>
+  <style>
+    .l { font: 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; opacity: 0; animation: in 7s infinite; }
+    @keyframes in { 0% { opacity: 0; } 4% { opacity: 1; } 92% { opacity: 1; } 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .l { animation: none; opacity: 1; } }
+  </style>
+  <rect width="760" height="330" rx="12" fill="#0d1117"/>
+  <rect width="760" height="36" rx="12" fill="#161b22"/>
+  <rect y="24" width="760" height="12" fill="#161b22"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f57"/><circle cx="42" cy="18" r="6" fill="#febc2e"/><circle cx="62" cy="18" r="6" fill="#28c840"/>
+  <text x="380" y="23" fill="#8b949e" text-anchor="middle" style="font: 13px ui-monospace, monospace">jobradar — deterministic application tracker &amp; reminder engine</text>
+  
+  <text x="24" y="66" fill="#e6edf3" class="l" style="animation-delay:0.3s"><tspan fill="#58a6ff">$ </tspan>jobradar add --company "Acme Cloud" --role "Staff SRE" --status applied --cv "v3.1"</text>
+  <text x="24" y="92" fill="#3fb950" class="l" style="animation-delay:0.8s">✓ Added application [acmecloud-20261106-e4f1] for Staff SRE at Acme Cloud</text>
+  
+  <text x="24" y="128" fill="#e6edf3" class="l" style="animation-delay:1.5s"><tspan fill="#58a6ff">$ </tspan>jobradar remind</text>
+  <text x="24" y="154" fill="#d29922" class="l" style="animation-delay:2.0s">🚨 [OVERDUE] FinFlow Payments — Backend Architect: Decision required within 2 days</text>
+  <text x="24" y="174" fill="#d29922" class="l" style="animation-delay:2.3s">⚠️ [STALE] Acme Cloud — Staff SRE: No response for 11 days (follow-up recommended)</text>
+
+  <text x="24" y="210" fill="#e6edf3" class="l" style="animation-delay:2.8s"><tspan fill="#58a6ff">$ </tspan>jobradar stats</text>
+  <text x="24" y="236" fill="#58a6ff" class="l" style="animation-delay:3.3s">📊 Tracked: 3 | Active: 2 | Response Rate: 67% | Offer Rate: 33%</text>
+
+  <text x="24" y="272" fill="#e6edf3" class="l" style="animation-delay:3.9s"><tspan fill="#58a6ff">$ </tspan>jobradar export --format ical --out calendar.ics</text>
+  <text x="24" y="294" fill="#3fb950" class="l" style="animation-delay:4.4s">✓ Exported 3 events to calendar.ics (compatible with Google / Apple Calendar)</text>
+  <text x="24" y="316" fill="#8b949e" class="l" style="animation-delay:4.9s">♥ Sostieni / Support: github.com/sponsors/MRJonam91 · ko-fi.com/mrjonam</text>
+</svg>

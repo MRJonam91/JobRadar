@@ -1,0 +1,234 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/MRJonam91/JobRadar/main/schema.json",
+  "title": "JobRadarLedger",
+  "description": "Deterministic job application tracker and interview lifecycle ledger schema",
+  "type": "object",
+  "required": [
+    "version",
+    "updatedAt",
+    "applications"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "owner": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      }
+    },
+    "applications": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/JobApplication"
+      }
+    }
+  },
+  "definitions": {
+    "JobApplication": {
+      "type": "object",
+      "required": [
+        "id",
+        "company",
+        "role",
+        "workplace",
+        "status",
+        "dates"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "workplace": {
+          "type": "string",
+          "enum": [
+            "remote",
+            "hybrid",
+            "onsite"
+          ]
+        },
+        "location": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "discovered",
+            "applied",
+            "screening",
+            "interviewing",
+            "offer_received",
+            "accepted",
+            "rejected",
+            "withdrawn",
+            "ghosted"
+          ]
+        },
+        "dates": {
+          "type": "object",
+          "required": [
+            "discoveredAt",
+            "lastInteractionAt"
+          ],
+          "properties": {
+            "discoveredAt": {
+              "type": "string"
+            },
+            "appliedAt": {
+              "type": "string"
+            },
+            "lastInteractionAt": {
+              "type": "string"
+            },
+            "offerDeadline": {
+              "type": "string"
+            }
+          }
+        },
+        "salary": {
+          "type": "object",
+          "required": [
+            "period",
+            "source"
+          ],
+          "properties": {
+            "currency": {
+              "type": "string"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "period": {
+              "type": "string",
+              "enum": [
+                "year",
+                "month",
+                "hour"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "minLength": 3,
+              "description": "Verifiable source required for all salary figures (e.g. job_posting, recruiter_chat, contract)"
+            }
+          }
+        },
+        "cv": {
+          "type": "object",
+          "required": [
+            "versionId"
+          ],
+          "properties": {
+            "versionId": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            },
+            "fileOrUrl": {
+              "type": "string"
+            }
+          }
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "date"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "interviewer": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "result": {
+                "type": "string",
+                "enum": [
+                  "passed",
+                  "pending",
+                  "failed"
+                ]
+              }
+            }
+          }
+        },
+        "reminders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "dueDate",
+              "reason"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "dueDate": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "completed": {
+                "type": "boolean"
+              },
+              "completedAt": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-11-06T19:00:00.000Z",
+  "owner": {
+    "name": "Manoj Rollo",
+    "email": "fbxmano@gmail.com"
+  },
+  "applications": [
+    {
+      "id": "acme-20261101-a1b2c3",
+      "company": "Acme Cloud Ltd",
+      "role": "Staff Platform Engineer",
+      "url": "https://example.com/jobs/staff-platform-engineer",
+      "workplace": "remote",
+      "location": "Europe / GMT+1",
+      "status": "interviewing",
+      "dates": {
+        "discoveredAt": "2026-10-25",
+        "appliedAt": "2026-10-26",
+        "lastInteractionAt": "2026-11-04"
+      },
+      "salary": {
+        "currency": "EUR",
+        "min": 95000,
+        "max": 115000,
+        "period": "year",
+        "source": "job_posting_public_range"
+      },
+      "cv": {
+        "versionId": "cv-platform-2026-v3",
+        "notes": "Highlighted Kubernetes CRDs, Rust operators, and telemetry architecture"
+      },
+      "stages": [
+        {
+          "id": "st-01",
+          "name": "Initial Recruiter Screen",
+          "date": "2026-10-29",
+          "type": "screening",
+          "interviewer": "Sarah Jenkins",
+          "notes": "Discussed distributed systems background and compensation expectations",
+          "result": "passed"
+        },
+        {
+          "id": "st-02",
+          "name": "Technical Deep Dive & Architecture",
+          "date": "2026-11-04",
+          "type": "system_design",
+          "interviewer": "David Chen (VP Eng)",
+          "notes": "Designed high-throughput event ingestion pipeline",
+          "result": "passed"
+        },
+        {
+          "id": "st-03",
+          "name": "Hiring Manager & Team Fit",
+          "date": "2026-11-12",
+          "type": "cultural_fit",
+          "interviewer": "Elena Rossi",
+          "result": "pending"
+        }
+      ],
+      "reminders": [
+        {
+          "id": "rem-01",
+          "dueDate": "2026-11-11",
+          "reason": "Review Acme Cloud platform whitepaper before cultural fit round"
+        }
+      ],
+      "tags": [
+        "platform",
+        "kubernetes",
+        "remote-eu"
+      ],
+      "notes": "Modern tech stack, fast communication."
+    },
+    {
+      "id": "finflow-20261015-d4e5f6",
+      "company": "FinFlow Payments",
+      "role": "Principal Backend Architect",
+      "workplace": "hybrid",
+      "location": "Milan, Italy",
+      "status": "offer_received",
+      "dates": {
+        "discoveredAt": "2026-10-10",
+        "appliedAt": "2026-10-12",
+        "lastInteractionAt": "2026-11-05",
+        "offerDeadline": "2026-11-15"
+      },
+      "salary": {
+        "currency": "EUR",
+        "min": 110000,
+        "max": 125000,
+        "period": "year",
+        "source": "formal_written_offer_letter"
+      },
+      "cv": {
+        "versionId": "cv-fintech-2026-v2",
+        "notes": "Emphasized PCI-DSS compliance and financial ledger idempotency"
+      },
+      "stages": [
+        {
+          "id": "st-01",
+          "name": "Talent Partner Call",
+          "date": "2026-10-18",
+          "type": "screening",
+          "result": "passed"
+        },
+        {
+          "id": "st-02",
+          "name": "Coding & Concurrency Assessment",
+          "date": "2026-10-25",
+          "type": "technical",
+          "result": "passed"
+        },
+        {
+          "id": "st-03",
+          "name": "Executive Partner Discussion",
+          "date": "2026-11-02",
+          "type": "hiring_manager",
+          "result": "passed"
+        }
+      ],
+      "reminders": [
+        {
+          "id": "rem-02",
+          "dueDate": "2026-11-14",
+          "reason": "Finalize offer evaluation and confirm contract terms"
+        }
+      ],
+      "tags": [
+        "fintech",
+        "distributed-systems",
+        "executive"
+      ],
+      "notes": "Excellent compensation package including equity and health plan."
+    },
+    {
+      "id": "staleinc-20260901-789abc",
+      "company": "StaleCorp Global",
+      "role": "Senior Distributed Systems Engineer",
+      "workplace": "remote",
+      "status": "applied",
+      "dates": {
+        "discoveredAt": "2026-09-01",
+        "appliedAt": "2026-09-02",
+        "lastInteractionAt": "2026-09-02"
+      },
+      "cv": {
+        "versionId": "cv-general-2026"
+      },
+      "stages": [],
+      "reminders": [],
+      "tags": [
+        "remote"
+      ],
+      "notes": "Applied via LinkedIn Easy Apply. No response received."
+    }
+  ]
+}
