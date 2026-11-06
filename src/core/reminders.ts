@@ -8,11 +8,16 @@ import {
 import type { JobApplication, ReminderAlert } from './types.ts';
 
 function parseDateOnly(str: string): Date {
-  const [y, m, d] = str.slice(0, 10).split('-').map(Number);
-  return new Date(y!, m! - 1, d!);
+  if (!str || typeof str !== 'string') return new Date();
+  const parts = str.slice(0, 10).split('-').map(Number);
+  if (parts.length < 3 || parts.some(n => isNaN(n))) return new Date();
+  const [y, m, d] = parts;
+  const dt = new Date(y!, m! - 1, d!);
+  return isNaN(dt.getTime()) ? new Date() : dt;
 }
 
 function diffInCalendarDays(from: Date, to: Date): number {
+  if (isNaN(from.getTime()) || isNaN(to.getTime())) return 0;
   const msPerDay = 1000 * 60 * 60 * 24;
   const utcFrom = Date.UTC(from.getFullYear(), from.getMonth(), from.getDate());
   const utcTo = Date.UTC(to.getFullYear(), to.getMonth(), to.getDate());

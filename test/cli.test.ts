@@ -65,13 +65,28 @@ Stack: Kubernetes, TypeScript, Go, Docker, Terraform.`,
     assert.equal(app.workplace, 'remote');
     assert.ok(app.rawPosting.includes('CloudScale Inc'));
 
-    // 4. Audit
+    // 4. Criteria & Audit
+    execFileSync(
+      process.execPath,
+      [CLI_PATH, 'criteria', '--min-salary', '90000', '--workplace', 'remote', '--file', ledgerFile],
+      { encoding: 'utf-8' }
+    );
+
     const auditOut = execFileSync(
       process.execPath,
       [CLI_PATH, 'audit', app.id, '--file', ledgerFile],
       { encoding: 'utf-8' }
     );
     assert.ok(auditOut.includes('Target Criteria Audit'));
+    assert.ok(auditOut.includes('COMPLIANT'));
+
+    // Filter by tag
+    const listTagOut = execFileSync(
+      process.execPath,
+      [CLI_PATH, 'list', '--tag', 'kubernetes', '--file', ledgerFile],
+      { encoding: 'utf-8' }
+    );
+    assert.ok(listTagOut.includes('CloudScale Inc'));
 
     // 5. Diff against updated posting
     writeFileSync(

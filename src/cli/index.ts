@@ -260,6 +260,45 @@ function main() {
         break;
       }
 
+      case 'criteria':
+      case 'config': {
+        const ledger = existsSync(ledgerPath) ? loadLedger(ledgerPath) : createEmptyLedger();
+        const minSal = flags['min-salary'] !== undefined ? Number(flags['min-salary']) : undefined;
+        const currency = flags.currency as string | undefined;
+        const wp = flags.workplace
+          ? (String(flags.workplace).split(',').map(s => s.trim()) as WorkplaceType[])
+          : undefined;
+        const roles = flags.roles ? String(flags.roles).split(',').map(s => s.trim()) : undefined;
+        const blacklist = flags.blacklist ? String(flags.blacklist).split(',').map(s => s.trim()) : undefined;
+
+        if (minSal !== undefined || currency || wp || roles || blacklist) {
+          ledger.targetCriteria = {
+            ...ledger.targetCriteria,
+            minSalary: minSal ?? ledger.targetCriteria?.minSalary,
+            currency: currency ?? ledger.targetCriteria?.currency ?? 'EUR',
+            preferredWorkplace: wp ?? ledger.targetCriteria?.preferredWorkplace,
+            targetRoles: roles ?? ledger.targetCriteria?.targetRoles,
+            blacklistedCompanies: blacklist ?? ledger.targetCriteria?.blacklistedCompanies
+          };
+          saveLedger(ledgerPath, ledger);
+          console.log('Updated target criteria in ledger.');
+        }
+
+        console.log('\n🎯 Target Criteria Configuration:');
+        if (!ledger.targetCriteria) {
+          console.log('  (none configured). Set with: jobradar criteria --min-salary 85000 --workplace remote --blacklist "BadCorp"');
+        } else {
+          const tc = ledger.targetCriteria;
+          console.log(`  - Min Salary:     ${tc.minSalary ? `${tc.minSalary} ${tc.currency || 'EUR'}` : 'unset'}`);
+          console.log(`  - Workplace:      ${tc.preferredWorkplace?.join(', ') || 'unset'}`);
+          console.log(`  - Target Roles:   ${tc.targetRoles?.join(', ') || 'unset'}`);
+          console.log(`  - Blacklist:      ${tc.blacklistedCompanies?.join(', ') || 'none'}`);
+        }
+        console.log('');
+        printSponsorLine();
+        break;
+      }
+
       case 'audit': {
         const id = positional[1];
         if (!id) {
@@ -414,6 +453,15 @@ function main() {
         }
         if (flags.remote) {
           list = list.filter(a => a.workplace === 'remote');
+        }
+        if (flags.stale) {
+          const alerts = detectApplicationReminders(ledger.applications);
+          const staleIds = new Set(alerts.filter(a => a.type === 'stale_application').map(a => a.applicationId));
+          list = list.filter(a => staleIds.has(a.id));
+        }
+        if (flags.tag) {
+          const reqTag = String(flags.tag).toLowerCase();
+          list = list.filter(a => (a.tags || []).some(t => t.toLowerCase() === reqTag));
         }
 
         if (flags.sort === 'salary') {

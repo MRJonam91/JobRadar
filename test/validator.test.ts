@@ -141,3 +141,20 @@ test('Validator: detects duplicate application IDs', () => {
   const dupError = res.issues.find(i => i.message.includes('Duplicate application ID'));
   assert.ok(dupError);
 });
+
+test('Validator: validates targetCriteria format and values', () => {
+  const invalidLedger = {
+    version: '1.0.0',
+    updatedAt: '2026-11-06T12:00:00.000Z',
+    targetCriteria: {
+      minSalary: -5000,
+      preferredWorkplace: ['invalid_workplace']
+    },
+    applications: []
+  };
+
+  const res = validateLedger(invalidLedger);
+  assert.equal(res.valid, false);
+  assert.ok(res.issues.some(i => i.path === '$.targetCriteria.minSalary'));
+  assert.ok(res.issues.some(i => i.path === '$.targetCriteria.preferredWorkplace'));
+});

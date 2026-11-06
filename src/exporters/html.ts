@@ -184,6 +184,32 @@ export function exportLedgerToHtml(ledger: JobRadarLedger): string {
     </div>
   </div>
 
+  ${alerts.length > 0 ? `
+  <h2>⚠️ Urgent Follow-ups & Reminders (${alerts.length})</h2>
+  <div class="table-container" style="margin-bottom: 28px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Urgency</th>
+          <th>Company</th>
+          <th>Role</th>
+          <th>Due Date</th>
+          <th>Action Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${alerts.map(a => `
+        <tr>
+          <td><span class="badge ${a.isOverdue ? 'badge-alert' : 'badge-stage'}">${a.isOverdue ? '🚨 OVERDUE' : '⏳ UPCOMING'}</span></td>
+          <td><strong>${escapeHtml(a.company)}</strong></td>
+          <td>${escapeHtml(a.role)}</td>
+          <td>${escapeHtml(a.dueDate)}</td>
+          <td>${escapeHtml(a.details)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>` : ''}
+
   <h2>📊 Kanban Pipeline</h2>
   <div class="board">
     ${columns

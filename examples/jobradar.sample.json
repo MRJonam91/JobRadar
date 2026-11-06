@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updatedAt": "2026-11-06T19:00:00.000Z",
+  "updatedAt": "2026-11-06T18:59:08.915Z",
   "owner": {
     "name": "Manoj Rollo",
     "email": "fbxmano@gmail.com"
@@ -154,5 +154,15 @@
       ],
       "notes": "Applied via LinkedIn Easy Apply. No response received."
     }
-  ]
+  ],
+  "targetCriteria": {
+    "minSalary": 90000,
+    "currency": "EUR",
+    "preferredWorkplace": [
+      "remote"
+    ],
+    "blacklistedCompanies": [
+      "UnethicalCorp"
+    ]
+  }
 }

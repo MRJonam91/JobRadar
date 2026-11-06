@@ -207,6 +207,34 @@ export function validateLedger(ledger: unknown): LedgerValidationResult {
     }
   });
 
+  // targetCriteria validation
+  if (l.targetCriteria !== undefined) {
+    const cp = '$.targetCriteria';
+    if (!l.targetCriteria || typeof l.targetCriteria !== 'object') {
+      issues.push({ path: cp, message: 'targetCriteria must be an object', severity: 'error' });
+    } else {
+      const tc = l.targetCriteria;
+      if (tc.minSalary !== undefined && (typeof tc.minSalary !== 'number' || tc.minSalary < 0)) {
+        issues.push({ path: `${cp}.minSalary`, message: 'minSalary must be a non-negative number', severity: 'error' });
+      }
+      if (tc.preferredWorkplace !== undefined) {
+        if (!Array.isArray(tc.preferredWorkplace)) {
+          issues.push({ path: `${cp}.preferredWorkplace`, message: 'preferredWorkplace must be an array', severity: 'error' });
+        } else {
+          for (const wp of tc.preferredWorkplace) {
+            if (!(VALID_WORKPLACE_TYPES as readonly string[]).includes(wp)) {
+              issues.push({
+                path: `${cp}.preferredWorkplace`,
+                message: `Invalid workplace "${wp}". Must be one of: ${VALID_WORKPLACE_TYPES.join(', ')}`,
+                severity: 'error'
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
   const errors = issues.filter(i => i.severity === 'error');
   return {
     valid: errors.length === 0,
